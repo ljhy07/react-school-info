@@ -1,34 +1,37 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import './home.css';
 
-import * as api from '../../api/user';
-
-function Home(){
-    const [is_login, setIsLogin] = useState(false);
+function Home() {
+    const [isLogin, setIsLogin] = useState(false);
+    const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const log = () => {
         navigate('/login');
-    }
+    };
 
     const sign = () => {
         navigate('/signup');
-    }
+    };
     
     const logout = () => {
         setIsLogin(false);
-        navigate('/')
-    }
+        setUserId(null);
+        navigate('/');
+    };
 
-    // useEffect(()=>{
-    //     let cookie = getCookie();
-        
-    //     if (cookie) setIsLogin(true);
-    //     else setIsLogin(false);
-    // }, []);
+    useEffect(() => {
+        if (location.state && location.state.userId) {
+            setUserId(location.state.userId);
+            setIsLogin(true);
+        } else {
+            setIsLogin(false);
+        }
+    }, [location.state]);
 
-    if (is_login == false){
+    if (!isLogin) {
         return (
             <div id="home">
                 <nav className="nav">
@@ -43,12 +46,10 @@ function Home(){
                 <nav className="nav">
                     <button onClick={logout}>LogOut</button>
                 </nav>
-                <h1>{}님 환영합니다</h1>
-                <h2>이메일 : {}</h2>
-                <h2>비밀번호 : {}</h2>
+                <h1>{userId}님 환영합니다</h1>
             </div>
         );
     }
 }
 
-export default Home;
+export default Home
